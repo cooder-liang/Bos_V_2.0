@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>取派标准</title>
+    <link id="easyuiTheme" rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.easyui.min.js"></script>
+
+    <script type="text/javascript">
+        /*先将body隐藏在显示不会出现页面刷新效果*/
+        $(function () {
+            $("body").css({visibility:"visible"});
+            /*收派标准信息表格*/
+            $("#grid").datagrid({
+                iconCls: 'icon-forward',
+                fit: true,
+                border: false,
+                rownumbers: true,
+                striped: true,
+                pageList: [10],
+                pagination: true,
+                toolbar: toolbar,
+                url: "../../standard_pageQuery.action",
+                idField: 'id',
+                columns: columns
+            });
+            // 对收派标准 save按钮，添加click事件
+            $("#save").click(function(){
+                // 判断是否form中所有表单对象 都是通过校验
+                if($("#standardForm").form('validate')){
+                    // 通过校验
+                    $("#standardForm").submit();
+                }else{
+                    $.messager.alert("警告","表单中还存在需要一些非法内容","warning");
+                }
+            });
+        });
+
+        /*工具栏*/
+        var toolbar=[{
+            id:'button-add',
+            text:'增加',
+            iconCls : 'icon-add',
+            handler:function () {
+                $("#standardWindow").window("open");
+            }
+        },{
+            id:'button-edit',
+            text:'修改',
+            iconCls:'icon-edit',
+            handler:function () {
+                //获取选中的列
+                var rows = $("#grid").datagrid('getSelections');
+                if(rows.length!=1){
+                    //没选或多选
+                    $.messager.alert("提示信息","修改数据时，只能选中一行","warning");
+                }else{
+                    //直选中一行
+                    var row = rows[0];
+                    //进行表单回显操作
+                    $("#standardForm").form('load',row);
+                    //显示窗口
+                    $("#standardWindow").window('open');
+                }
+            }
+        }];
+
+        /*自定义列*/
+        var columns=[[{
+            field:'id',
+            checkbox:true
+        },{
+            field:'standardName',
+            title:'标准名称',
+            align:'center',
+            width:120
+        },{
+            field:'minWeight',
+            title:'最小重量',
+            align:'center',
+            width:120
+        },{
+            field:'maxWeight',
+            title:'最大重量',
+            align:'center',
+            width:120
+        },{
+            field:'minLength',
+            title:'最小长度',
+            align:'center',
+            width:120
+        },{
+            field:'maxLength',
+            title:'最大长度',
+            width:120,
+            align:'center'
+        },{
+            field : 'operator',
+            title : '操作人',
+            width : 120,
+            align : 'center'
+        },{
+            field : 'operatingTime',
+            title : '操作时间',
+            width : 120,
+            align : 'center'
+        },{
+            field : 'company',
+            title : '操作单位',
+            width : 120,
+            align : 'center'
+        }]];
+
+    </script>
+
+
+</head>
+<body class="easyui-layout" style="visibility: hidden">
+<!--收派标准的信息表格-->
+<div region="center" border="false">
+    <table id="grid"></table>
+</div>
+<!--easyui的window窗口-->
+<div class="easyui-window" title="对收派标准进行添加或修改" id="standardWindow"
+     collapsible="false" minimizable="false" maximizable="false" modal="true" closed="true"
+     style="width:600px;top:50px;left:200px">
+    <!--保存toolbar-->
+    <div region="north" style="height: 31px;overflow: hidden;" split="false" border="false">
+        <div class="datagrid-toolbar">
+            <a id="save" href="#" icon="icon-save" class="easyui-linkbutton" plan="true">保存</a>
+        </div>
+    </div>
+    <!--信息项-->
+    <div region="center" style="overflow:auto;padding:5px;" border="false">
+        <form id="standardForm" action="../../standard_save.action" method="post">
+            <table class="table-edit" width="80%" align="center">
+                <tr class="title">
+                    <td colspan="2">收派标准信息
+                        <!--提供隐藏域加载id-->
+                        <input type="hidden" name="id"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>收派标准名称</td>
+                    <td><input type="text" name="standardName" class="easyui-validatebox" data-options="required:true"></td>
+                </tr>
+                <tr>
+                    <td>最小重量</td>
+                    <td><input type="text" name="minWeight" class="easyui-numberbox" data-options="required:true"></td>
+                </tr>
+                <tr>
+                    <td>最大重量</td>
+                    <td><input type="text" name="maxWeight" class="easyui-numberbox" data-options="required:true"></td>
+                </tr>
+                <tr>
+                    <td>最小长度</td>
+                    <td><input type="text" name="minLength" class="easyui-numberbox" data-options="required:true"></td>
+                </tr>
+                <tr>
+                    <td>最大长度</td>
+                    <td><input type="text" name="maxLength" class="easyui-numberbox" data-options="required:true"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>
